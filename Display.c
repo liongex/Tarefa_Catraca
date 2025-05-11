@@ -21,7 +21,7 @@
 
 ssd1306_t disp;//variável display do Oled
 
-void setup(){
+void setup_oled(){
     //inicialização do Oled
     stdio_init_all();
     i2c_init(I2C_PORT, 400*1000);
@@ -47,19 +47,10 @@ void print_retangulo(int x1, int y1, int x2, int y2){
 
 void print_menu(int pos){
         ssd1306_clear(&disp);//Limpa a tela
-        print_texto(4, 2, 1, "Portas-Logicas");
+        print_texto(4, 2, 1, "Entradas do Sistema");
         print_retangulo(2,pos+2,125,12);
-        print_texto(6, 18, 1.5,"AND");
-        print_texto(6, 30, 1.5, "OR");
-        print_texto(6, 42, 1.5, "NOT");
-        print_texto(6, 54, 1.5, "NAND");
-}
-
-void print_menu2(int pos){
-    ssd1306_clear(&disp);//Limpa a tela
-    print_texto(4, 2, 1, "Portas-Logicas");
-    print_retangulo(2,pos+2,125,12);
-    print_texto(6, 18, 1.5,"NOR");
-    print_texto(6, 30, 1.5, "XOR");
-    print_texto(6, 42, 1.5, "XNOR");
+        print_texto(6, 18, 1,"GR-Giro Reconhecido");
+        print_texto(6, 30, 1, "HO-Horario Permitido");
+        print_texto(6, 42, 1, "DI-Dia Permitido");
+        print_texto(6, 54, 1, "PT-Portaria");
 }

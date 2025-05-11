@@ -13,11 +13,10 @@
 #include <hardware/i2c.h>
 
 //Protótipos das funções
-void setup(); // função para configurar display oled e adc
+void setup_oled(); // função para configurar display oled e adc
 
 void print_texto(int x, int y, int tam, char * msg); // função para escrever textos
 void print_retangulo(int x1, int y1, int x2, int y2); // função para desenhar retangulo do menu
 void print_menu(int pos); // função para desenhar o menu
-void print_menu2(int pos); // função para desenhar o segundo menu
 
 #endif
