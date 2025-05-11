@@ -6,8 +6,8 @@
     BIBLIOTECA RESPONSÁVEL PELO DISPLAY
 
 */
-#ifndef _inc_joystick
-#define _inc_joystick
+#ifndef _inc_Display
+#define _inc_Display
 
 #include <pico/stdlib.h>
 #include <hardware/i2c.h>

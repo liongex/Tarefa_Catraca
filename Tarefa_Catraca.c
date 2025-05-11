@@ -10,20 +10,20 @@
 
 #include <stdio.h>
 #include "pico/stdlib.h"
+#include "hardware/adc.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
-#include "hardware/i2c.h"
-#include "ssd1306.h"
-#include "hardware/adc.h"
 #include "Display.h"
-
+#include "Leds.h"
 
 // Biblioteca gerada pelo arquivo .pio durante compilação.
 #include "ws2818b.pio.h"
 
 // Definição do número de LEDs e pino.
-#define LED_COUNT 25
-#define LED_PIN 7
+#define LED_PIN0  4
+#define LED_PIN1  3
+#define LED_PIN2  2
+#define LED_PIN3  1
 
 #define LED_R 13 // PINO DO LED VERMELHO
 #define LED_G 11 // PINO DO LED VERDE
@@ -35,30 +35,24 @@
 #define BOTTON_A 5 //Porta ADC de variação do Y do Joystick
 #define BOTTON_B 6 //Porta ADC de variação do X do joystick
 
+#define LED_COUNT 25
+#define LED_PIN 7
+
 const int ADC_CHANNEL_0 = 0; // Canal ADC para o eixo X do joystick
 const int ADC_CHANNEL_1 = 1; // Canal ADC para o eixo Y do joystick
 
-static uint16_t vrx_value, vry_value; 
-
-// Definição de pixel GRB
-struct pixel_t {
-  uint8_t G, R, B; // Três valores de 8-bits compõem um pixel.
-};
-typedef struct pixel_t pixel_t;
-typedef pixel_t npLED_t; // Mudança de nome de "struct pixel_t" para "npLED_t" por clareza.
-
-// Declaração do buffer de pixels que formam a matriz.
-npLED_t leds[LED_COUNT];
 
 // Variáveis para uso da máquina PIO.
 PIO np_pio;
 uint sm;
 
+// Declaração do buffer de pixels que formam a matriz.
+npLED_t leds[LED_COUNT];
+
+static uint16_t vrx_value, vry_value; 
+
 void setup_joystick(); // função para configurar adc
 void npInit(uint pin); //Inicializa a máquina PIO para controle da matriz de LEDs.
-void npSetLED(const uint index, const uint8_t r, const uint8_t g, const uint8_t b); //Atribui uma cor RGB a um LED.
-void npClear();//Limpa o buffer de pixels.
-void npWrite();//Escreve os dados do buffer nos LEDs.
 
 int main() {
 
@@ -66,6 +60,18 @@ int main() {
   stdio_init_all();
   setup_oled();
   setup_joystick();
+  setup_rgb(LED_R,LED_G);
+
+  gpio_put(LED_G, true);
+  gpio_put(LED_R, true);
+  
+  npInit(LED_PIN); // Inicialização da Maquina de Estado para a Matriz de Leds.
+  npClear(leds, LED_COUNT); // Limpeza do buffer de leds.
+  npSetLED(LED_PIN0, 122, 0, 0, leds);
+  npSetLED(LED_PIN1, 122, 0, 0, leds);
+  npSetLED(LED_PIN2, 122, 0, 0, leds);
+  npSetLED(LED_PIN3, 122, 0, 0, leds);
+  npWrite(LED_COUNT,leds, np_pio,sm);
 
   uint countdown = 0; //verificar seleções para baixo do joystick
   uint countup = 3; //verificar seleções para cima do joystick
@@ -76,7 +82,7 @@ int main() {
   const uint adc_max = (1 << 12) - 1;
   uint bar_y_pos;
 
-  print_menu(pos_y);//impressão inicial do menu
+  print_menu(pos_y); // Impressão inicial do menu
 
   // Não faz mais nada. Loop infinito.
   while (true) {
@@ -105,8 +111,8 @@ int main() {
                 print_menu(pos_y);
             }
 
-    sleep_ms(100);//delay de atualização
-    posy_ant=pos_y;//atualização posição anterior.
+        sleep_ms(100);//delay de atualização
+        posy_ant=pos_y;//atualização posição anterior.
 
     }
 }
@@ -124,7 +130,6 @@ void setup_joystick(){
         adc_gpio_init(VRX);
 
 }; 
-
 
 //Inicializa a máquina PIO para controle da matriz de LEDs.
 
@@ -150,35 +155,4 @@ void npInit(uint pin) {
       leds[i].G = 0;
       leds[i].B = 0;
     }
-  }
-
-
-//Atribui uma cor RGB a um LED.
-
-  void npSetLED(const uint index, const uint8_t r, const uint8_t g, const uint8_t b) {
-    leds[index].R = r;
-    leds[index].G = g;
-    leds[index].B = b;
-  }
-
-
-//Limpa o buffer de pixels.
-
-  void npClear() {
-    for (uint i = 0; i < LED_COUNT; ++i)
-      npSetLED(i, 0, 0, 0);
-  }
-
-
-//Escreve os dados do buffer nos LEDs.
-
-  void npWrite() {
-    // Escreve cada dado de 8-bits dos pixels em sequência no buffer da máquina PIO.
-    for (uint i = 0; i < LED_COUNT; ++i) {
-      pio_sm_put_blocking(np_pio, sm, leds[i].G);
-      pio_sm_put_blocking(np_pio, sm, leds[i].R);
-      pio_sm_put_blocking(np_pio, sm, leds[i].B);
-    }
-    sleep_us(100); // Espera 100us, sinal de RESET do datasheet.
-  }
-  
+}

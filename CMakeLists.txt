@@ -35,7 +35,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(Tarefa_Catraca Tarefa_Catraca.c ssd1306.c Display.c)
+add_executable(Tarefa_Catraca Tarefa_Catraca.c ssd1306.c Display.c Leds.c)
 
 pico_set_program_name(Tarefa_Catraca "Tarefa_Catraca")
 pico_set_program_version(Tarefa_Catraca "0.1")
