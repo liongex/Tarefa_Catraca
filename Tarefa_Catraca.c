@@ -1,7 +1,22 @@
+/*
+    Tarefa 04 Sistemas Digitais - Embarcatech
+    Aluno: Isac de Lima Feliciano;
+    Matrícula: 104.265.784-06 / 20251ZL00130048.
+    
+    CÓDIGO PRINCIPAL
+
+*/
+
+
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
+#include "hardware/i2c.h"
+#include "ssd1306.h"
+#include "hardware/adc.h"
+#include "Display.h"
+
 
 // Biblioteca gerada pelo arquivo .pio durante compilação.
 #include "ws2818b.pio.h"
@@ -9,6 +24,17 @@
 // Definição do número de LEDs e pino.
 #define LED_COUNT 25
 #define LED_PIN 7
+
+#define LED_R 13 // PINO DO LED VERMELHO
+#define LED_G 11 // PINO DO LED VERDE
+
+#define VRY 26 //Porta ADC de variação do Y do Joystick
+#define VRX 27 //Porta ADC de variação do X do joystick
+#define SW 6 //Pino do Botão do Joystick
+
+#define BOTTON_A 5 //Porta ADC de variação do Y do Joystick
+#define BOTTON_B 6 //Porta ADC de variação do X do joystick
+
 
 // Definição de pixel GRB
 struct pixel_t {
@@ -81,6 +107,8 @@ void npWrite() {
   sleep_us(100); // Espera 100us, sinal de RESET do datasheet.
 }
 
+
+
 int main() {
 
   // Inicializa entradas e saídas.
@@ -89,17 +117,15 @@ int main() {
   // Inicializa matriz de LEDs NeoPixel.
   npInit(LED_PIN);
   npClear();
-
-  // Aqui, você desenha nos LEDs.
-
-   // Escreve os dados nos LEDs.
+  setup();
+  print_menu(12);
 
   // Não faz mais nada. Loop infinito.
   while (true) {
-    leds[0].G = 122;
+    leds[LED_PIN].G = 122;
     npWrite();
     sleep_ms(1000);
-    leds[0].G = 0;
+    leds[LED_PIN].G = 0;
     npWrite();
     sleep_ms(1000);
   }

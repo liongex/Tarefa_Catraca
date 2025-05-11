@@ -35,7 +35,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(Tarefa_Catraca Tarefa_Catraca.c )
+add_executable(Tarefa_Catraca Tarefa_Catraca.c ssd1306.c Display.c)
 
 pico_set_program_name(Tarefa_Catraca "Tarefa_Catraca")
 pico_set_program_version(Tarefa_Catraca "0.1")
@@ -49,18 +49,17 @@ pico_enable_stdio_usb(Tarefa_Catraca 1)
 
 # Add the standard library to the build
 target_link_libraries(Tarefa_Catraca
-        pico_stdlib)
+        pico_stdlib
+        hardware_pio
+        hardware_clocks
+        hardware_i2c
+        hardware_adc
+        hardware_pwm )
 
 # Add the standard include files to the build
 target_include_directories(Tarefa_Catraca PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
 )
-
-# Add any user requested libraries
-target_link_libraries(Tarefa_Catraca 
-        hardware_pio
-        hardware_clocks
-        )
 
 pico_add_extra_outputs(Tarefa_Catraca)
 
